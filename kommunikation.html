@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genrer</title>
+
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="hero">
+    <h1>Kommunikation</h1>
+
+    <p>
+        I dette emne lærer du at analysere argumenter.
+    </p>
+
+    <p>
+        Når du er færdig, kan du identificere påstande,
+        belæg og hjemler.
+    </p>
+</header>
+
+<main>
+
+<section>
+    <h2>Læs teksten</h2>
+
+    <p>
+        Et argument består ofte af en påstand og et belæg.
+        Belægget forklarer, hvorfor man skal acceptere påstanden.
+    </p>
+</section>
+
+<section>
+    <h2>Test dig selv</h2>
+
+    <p>
+        Hvad kaldes hovedsynspunktet i et argument?
+    </p>
+
+    <button onclick="quiz('forkert')">
+        Belæg
+    </button>
+
+    <button onclick="quiz('rigtigt')">
+        Påstand
+    </button>
+
+    <button onclick="quiz('forkert')">
+        Hjemmel
+    </button>
+
+    <div id="feedback"></div>
+
+</section>
+
+<section>
+
+<h1>Flashcards</h1>
+
+<div class="flashcard" onclick="flipCard(this)">
+    <div class="front">
+        Hvad er ethos?
+    </div>
+
+    <div class="back">
+        Afsenderens troværdighed.
+    </div>
+</div>
+</section>
+
+<h3>Træk begrebet til den rigtige forklaring</h3>
+
+<div draggable="true" class="drag-item" id="paastand">
+    Påstand
+</div>
+
+<div class="drop-zone"
+     ondrop="drop(event)"
+     ondragover="allowDrop(event)"
+     data-answer="paastand">
+
+    Hovedsynspunktet i argumentationen
+</div>
+
+
+<section>
+
+    <h2>Sortér teksttyperne</h2>
+
+    <p>
+        Træk hvert eksempel til den korrekte kategori.
+    </p>
+
+    <div class="sorteringsområde">
+
+        <div class="kategori"
+             data-answer="fakta"
+             ondrop="drop(event)"
+             ondragover="allowDrop(event)">
+            <h3>Fakta</h3>
+        </div>
+
+        <div class="kategori"
+             data-answer="fiktion"
+             ondrop="drop(event)"
+             ondragover="allowDrop(event)">
+            <h3>Fiktion</h3>
+        </div>
+
+        <div class="kategori"
+             data-answer="faktion"
+             ondrop="drop(event)"
+             ondragover="allowDrop(event)">
+            <h3>Faktion</h3>
+        </div>
+
+    </div>
+
+    <div class="kortområde">
+
+        <div class="kort"
+             id="kort1"
+             draggable="true"
+             data-type="fakta"
+             ondragstart="drag(event)">
+            Nyhedsartikel om valgresultat
+        </div>
+
+        <div class="kort"
+             id="kort2"
+             draggable="true"
+             data-type="fiktion"
+             ondragstart="drag(event)">
+            Harry Potter
+        </div>
+
+        <div class="kort"
+             id="kort3"
+             draggable="true"
+             data-type="faktion"
+             ondragstart="drag(event)">
+            Nordkraft
+        </div>
+
+    </div>
+
+    <div id="resultat"></div>
+
+</section>
+
+<section>
+
+    <h2>Find belægget</h2>
+
+    <p>
+        Klik på den del af argumentet, som fungerer som belæg.
+    </p>
+
+    <div class="tekstboks">
+
+        Jeg mener, at elever bør have senere mødetid,
+        fordi
+        <span class="klikbart"
+              onclick="tjekSvar(this, true)">
+              unge lærer bedre, når de er udhvilede.
+        </span>
+
+    </div>
+
+    <div id="feedback"></div>
+
+</section>
+
+<p>
+
+En argumentation består ofte af en
+
+<span class="begreb"
+      onclick="forklar('påstand')">
+      påstand
+</span>
+
+og et
+
+<span class="begreb"
+      onclick="forklar('belæg')">
+      belæg
+</span>.
+
+</p>
+
+<div id="forklaring"></div>
+
+</main>
+
+<script src="js/app.js"></script>
+
+</body>
+</html>
