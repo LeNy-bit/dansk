@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quiz: Analyse af digitale artefakter</title>
+
+<style>
+
+body{
+    font-family:Arial,sans-serif;
+    max-width:900px;
+    margin:40px auto;
+    padding:20px;
+    line-height:1.6;
+}
+
+h1{
+    color:#003366;
+}
+
+#questionBox{
+    background:#f5f5f5;
+    padding:25px;
+    border-radius:10px;
+}
+
+#question{
+    font-size:1.2em;
+    font-weight:bold;
+}
+
+input{
+    width:300px;
+    padding:10px;
+    margin-right:10px;
+}
+
+button{
+    padding:10px 20px;
+    margin-top:10px;
+    cursor:pointer;
+}
+
+.correct{
+    color:green;
+}
+
+.wrong{
+    color:red;
+}
+
+#progressContainer{
+    width:100%;
+    height:25px;
+    background:#ddd;
+    border-radius:20px;
+    margin-bottom:20px;
+    overflow:hidden;
+}
+
+#progressBar{
+    height:100%;
+    width:0%;
+    background:#2e8b57;
+    transition:0.4s;
+}
+
+.stats{
+    display:flex;
+    gap:30px;
+    margin-bottom:15px;
+    font-weight:bold;
+}
+
+</style>
+
+</head>
+<body>
+
+<h1>Quiz: Analyse af digitale artefakter</h1>
+
+<div class="stats">
+    <div id="score">Point: 0</div>
+    <div id="highscore">Highscore: 0</div>
+</div>
+
+<div id="progressContainer">
+    <div id="progressBar"></div>
+</div>
+
+<p id="progress"></p>
+
+<div id="questionBox">
+
+    <p id="question"></p>
+
+    <input
+        type="text"
+        id="answer"
+        autocomplete="off">
+
+    
+
+    <button onclick="checkAnswer()">
+        Tjek svar
+    </button>
+
+    <button onclick="nextQuestion()">
+        Næste spørgsmål
+    </button>
+
+    <p id="feedback"></p>
+
+</div>
+
+<script>
+
+/**************************************************
+ SPØRGSMÅL
+**************************************************/
+
+let questions = [
+
+{
+question:"Et digitalt _____ er en digital løsning eller teknologi.",
+answers:["artefakt"],
+hint:"Begynder med a.",
+explanation:"Et artefakt er en digital enhed, app eller løsning."
+},
+
+{
+question:"Producentens forventning til anvendelsen kaldes _____.",
+answers:["intentionalitet"],
+hint:"Begynder med i.",
+explanation:"Intentionalitet beskriver den tilsigtede brug."
+},
+
+{
+question:"Data som sendes ind i systemet kaldes _____.",
+answers:["input"],
+hint:"Modsat output.",
+explanation:"Input er de data systemet modtager."
+},
+
+{
+question:"Data som kommer ud af systemet kaldes _____.",
+answers:["output","uddata"],
+hint:"Modsat input.",
+explanation:"Output er systemets respons."
+},
+
+{
+question:"Hvorfor teknologien blev udviklet undersøges i en _____.",
+answers:["formålsanalyse"],
+hint:"Starter med formål.",
+explanation:"Formålsanalysen undersøger teknologiens hensigt."
+},
+
+{
+question:"Hvordan mennesker faktisk bruger teknologien undersøges gennem _____.",
+answers:["brugsstudier"],
+hint:"Starter med brug.",
+explanation:"Brugsstudier viser den faktiske anvendelse."
+},
+
+{
+question:"Teknologiens virkninger undersøges i en _____.",
+answers:["konsekvensvurdering"],
+hint:"Starter med konsekvens.",
+explanation:"Man undersøger både gevinster og ulemper."
+},
+
+{
+question:"En analyse af teknologiens funktioner kaldes en _____.",
+answers:["teknologianalyse"],
+hint:"Starter med teknologi.",
+explanation:"Man undersøger opbygning og funktion."
+},
+
+{
+question:"Et tastatur er et eksempel på _____-teknologi.",
+answers:["input"],
+hint:"Sender data til computeren.",
+explanation:"Tastaturet leverer data til systemet."
+},
+
+{
+question:"En skærm er et eksempel på _____-teknologi.",
+answers:["output"],
+hint:"Viser noget til brugeren.",
+explanation:"Skærmen præsenterer information."
+},
+
+{
+question:"En mikrofon fungerer typisk som _____.",
+answers:["input"],
+hint:"Registrerer lyd.",
+explanation:"Mikrofonen sender lyd ind i systemet."
+},
+
+{
+question:"En højttaler fungerer typisk som _____.",
+answers:["output"],
+hint:"Gengiver lyd.",
+explanation:"Højttaleren afleverer lyd til brugeren."
+},
+
+{
+question:"Bluetooth er en _____ teknologi.",
+answers:["trådløs"],
+hint:"Ingen kabler.",
+explanation:"Bluetooth sender data uden ledninger."
+},
+
+{
+question:"WiFi er en _____ forbindelse.",
+answers:["trådløs"],
+hint:"Modsat kabel.",
+explanation:"WiFi anvender radiobølger."
+},
+
+{
+question:"Computere arbejder med det _____ talsystem.",
+answers:["binære","binær"],
+hint:"0 og 1.",
+explanation:"Digitale systemer arbejder med bit."
+},
+
+{
+question:"RFID anvendes ofte til _____ af genstande.",
+answers:["identifikation"],
+hint:"Genkendelse af noget.",
+explanation:"RFID bruges til registrering og identifikation."
+},
+
+{
+question:"Et digitalt artefakt udvikles normalt med et bestemt _____.",
+answers:["formål"],
+hint:"Hvorfor findes det?",
+explanation:"Alle artefakter skabes med en hensigt."
+},
+
+{
+question:"Producentens hensigt beskriver artefaktets _____.",
+answers:["intentionalitet"],
+hint:"Begynder med i.",
+explanation:"Den tilsigtede brug."
+},
+
+{
+question:"GPS-positioner fungerer som _____.",
+answers:["input"],
+hint:"Data sendes ind.",
+explanation:"GPS-data behandles af systemet."
+},
+
+{
+question:"Rutevejledningen fra GPS er _____.",
+answers:["output"],
+hint:"Data kommer ud.",
+explanation:"Brugeren modtager information."
+},
+
+{
+question:"Et smartwatch er et digitalt _____.",
+answers:["artefakt"],
+hint:"Samme ord som tidligere.",
+explanation:"Smartwatchet er et digitalt produkt."
+},
+
+{
+question:"Et login-system er et digitalt _____.",
+answers:["artefakt"],
+hint:"Begynder med a.",
+explanation:"Et login-system er et digitalt artefakt."
+},
+
+{
+question:"Fingeraftryksscanneren fungerer som _____.",
+answers:["input"],
+hint:"Registrerer noget.",
+explanation:"Biometriske data sendes til systemet."
+},
+
+{
+question:"Notifikationer på mobilen er typisk _____.",
+answers:["output"],
+hint:"Systemet sender noget til dig.",
+explanation:"Brugeren modtager information."
+},
+
+{
+question:"Arbejdsmiljømæssige konsekvenser undersøges i en _____.",
+answers:["konsekvensvurdering"],
+hint:"Starter med konsekvens.",
+explanation:"Man vurderer påvirkninger af mennesker."
+}
+
+,
+{
+question:"En database indeholder organiserede _____.",
+answers:["data"],
+hint:"Informationer som systemet gemmer.",
+explanation:"Databaser bruges til at lagre og organisere data."
+},
+
+{
+question:"Når man sender en e-mail, fungerer tastaturet som _____.",
+answers:["input"],
+hint:"Data sendes ind i systemet.",
+explanation:"Tastaturet er en input-enhed."
+},
+
+{
+question:"Når en printer udskriver et dokument, fungerer den som _____.",
+answers:["output"],
+hint:"Information sendes ud fra systemet.",
+explanation:"Printeren producerer output."
+},
+
+{
+question:"En stregkodescanner anvendes til at _____ varer.",
+answers:["registrere"],
+hint:"Den aflæser oplysninger.",
+explanation:"Scanneren registrerer information om varen."
+},
+
+{
+question:"Et password bruges ofte sammen med et _____.",
+answers:["brugernavn"],
+hint:"Man logger ind med begge dele.",
+explanation:"Brugernavn og password identificerer brugeren."
+},
+
+{
+question:"MitID er et eksempel på en løsning til digital _____.",
+answers:["identifikation"],
+hint:"Fastslår hvem brugeren er.",
+explanation:"MitID bruges til sikker identifikation."
+},
+
+{
+question:"Et system kan modtage input fra forskellige _____ .",
+answers:["sensorer"],
+hint:"Måler lys, temperatur eller bevægelse.",
+explanation:"Sensorer registrerer data fra omgivelserne."
+},
+
+{
+question:"GPS står for Global Positioning _____.",
+answers:["system"],
+hint:"Sidste ord i forkortelsen.",
+explanation:"GPS betyder Global Positioning System."
+},
+
+{
+question:"En app til navigation har typisk til formål at hjælpe brugeren med at finde _____ .",
+answers:["vej"],
+hint:"Hvor skal man køre eller gå hen?",
+explanation:"Navigation hjælper brugeren med at finde ruter."
+},
+
+{
+question:"En temperatursensor måler _____ i omgivelserne.",
+answers:["temperatur"],
+hint:"Måles i grader.",
+explanation:"Sensoren registrerer temperatur."
+},
+
+{
+question:"Et digitalt artefakts brugerflade skal være nem at _____ .",
+answers:["bruge"],
+hint:"Det handler om brugervenlighed.",
+explanation:"En god brugerflade gør systemet lettere at anvende."
+},
+
+{
+question:"Mange digitale artefakter indsamler _____ om brugerne.",
+answers:["data"],
+hint:"Informationer og oplysninger.",
+explanation:"Brugerdata anvendes ofte til at forbedre tjenester."
+},
+
+{
+question:"Hvis en teknologi sparer arbejdskraft, kan det være en positiv _____ .",
+answers:["konsekvens"],
+hint:"Noget der følger af teknologien.",
+explanation:"Teknologier kan have både positive og negative konsekvenser."
+},
+
+{
+question:"En mobiltelefon består både af hardware og _____.",
+answers:["software"],
+hint:"Programmerne i systemet.",
+explanation:"Software er de programmer, der styrer telefonen."
+},
+
+{
+question:"Google Maps er et eksempel på et digitalt _____ .",
+answers:["artefakt"],
+hint:"Samme svar som ved apps og smartwatch.",
+explanation:"Google Maps er en digital løsning med et bestemt formål."
+},
+
+{
+question:"Input behandles af systemet, før det bliver til _____.",
+answers:["output"],
+hint:"Modsat input.",
+explanation:"Output er resultatet af databehandlingen."
+},
+
+{
+question:"Når man undersøger, hvem der har fordel af teknologien, arbejder man med en _____.",
+answers:["formålsanalyse"],
+hint:"Starter med formål.",
+explanation:"Man undersøger teknologiens hensigt og interesser."
+},
+
+{
+question:"En bevægelsessensor registrerer _____ .",
+answers:["bevægelse"],
+hint:"Når noget flytter sig.",
+explanation:"Bevægelsessensorer reagerer på aktivitet."
+},
+
+{
+question:"Når et system lagrer oplysninger, siger man, at data bliver _____ .",
+answers:["gemt"],
+hint:"Det modsatte af slettet.",
+explanation:"Data lagres, så de kan bruges senere."
+},
+
+{
+question:"En bruger af et digitalt artefakt kaldes ofte en _____ .",
+answers:["bruger"],
+hint:"Samme ord som på dansk.",
+explanation:"Brugeren anvender systemet."
+},
+
+{
+question:"En adgangskontrol kan hjælpe med at øge _____ .",
+answers:["sikkerheden","sikkerhed"],
+hint:"Beskytter mod uønsket adgang.",
+explanation:"Adgangskontrol er en vigtig sikkerhedsforanstaltning."
+},
+
+{
+question:"Software udvikles ved hjælp af _____ .",
+answers:["programmering"],
+hint:"Man skriver kode.",
+explanation:"Programmering bruges til at skabe software."
+},
+
+{
+question:"En computer behandler information ved hjælp af en _____ .",
+answers:["processor"],
+hint:"Computerens regneenhed.",
+explanation:"Processoren udfører beregninger og instruktioner."
+},
+
+{
+question:"Et login-system skal kunne _____ brugeren.",
+answers:["identificere"],
+hint:"Fastslå hvem personen er.",
+explanation:"Systemet skal vide, hvem der logger ind."
+},
+
+{
+question:"Når teknologi deles via internettet, sker det gennem et _____ .",
+answers:["netværk"],
+hint:"Flere enheder koblet sammen.",
+explanation:"Internettet består af mange sammenkoblede netværk."
+},
+
+{
+question:"Digitale artefakter kan påvirke menneskers _____ .",
+answers:["adfærd"],
+hint:"Hvordan mennesker handler.",
+explanation:"Teknologier kan ændre den måde mennesker arbejder eller lever på."
+},
+
+{
+question:"En algoritme er en række _____ som systemet følger.",
+answers:["instruktioner"],
+hint:"Trin eller regler.",
+explanation:"Algoritmer fortæller systemet, hvad det skal gøre."
+},
+
+{
+question:"Når en mobil vibrerer ved en besked, er vibrationen et eksempel på _____.",
+answers:["output"],
+hint:"Noget systemet sender til brugeren.",
+explanation:"Vibrationen er systemets respons."
+},
+
+{
+question:"I brugsstudier undersøger man ofte brugernes _____.",
+answers:["adfærd"],
+hint:"Hvordan de handler.",
+explanation:"Brugsstudier ser på den faktiske anvendelse."
+},
+
+{
+question:"Et digitalt artefakt skal ofte løse en bestemt _____ for brugeren.",
+answers:["opgave"],
+hint:"Noget som skal udføres.",
+explanation:"Teknologier udvikles ofte for at hjælpe med konkrete opgaver."
+},
+
+{
+question:"En computer består af hardware og _____.",
+answers:["software"],
+hint:"Programmerne i systemet.",
+explanation:"Software er de programmer og data, der får computeren til at fungere."
+},
+
+{
+question:"Et netværk forbinder flere digitale _____ sammen.",
+answers:["enheder"],
+hint:"Computere, telefoner og tablets er eksempler.",
+explanation:"Et netværk gør det muligt for enheder at kommunikere."
+},
+
+{
+question:"Data sendes ofte gennem et _____ mellem afsender og modtager.",
+answers:["netværk"],
+hint:"Internettet er et eksempel.",
+explanation:"Netværk transporterer data mellem enheder."
+},
+
+{
+question:"Internettet består af mange sammenkoblede _____.",
+answers:["netværk"],
+hint:"Samme ord som i forrige spørgsmål.",
+explanation:"Internettet er et globalt netværk af netværk."
+},
+
+{
+question:"Når en app beder om adgang til kameraet, ønsker den adgang til en _____.",
+answers:["sensor"],
+hint:"Kameraet registrerer omgivelserne.",
+explanation:"Kameraet fungerer som sensor."
+},
+
+{
+question:"Et digitalt artefakt kan indsamle oplysninger om brugerens _____.",
+answers:["adfærd"],
+hint:"Hvordan brugeren handler.",
+explanation:"Mange systemer registrerer brugeradfærd."
+},
+
+{
+question:"Personlige oplysninger kaldes ofte _____.",
+answers:["persondata"],
+hint:"Beskyttes af GDPR.",
+explanation:"Persondata er oplysninger, der kan knyttes til en person."
+},
+
+{
+question:"GDPR handler om beskyttelse af _____.",
+answers:["persondata"],
+hint:"Information om mennesker.",
+explanation:"GDPR regulerer behandling af persondata."
+},
+
+{
+question:"Når et system gemmer data til senere brug, kaldes det _____.",
+answers:["lagring"],
+hint:"Data bliver gemt.",
+explanation:"Lagring betyder opbevaring af data."
+},
+
+{
+question:"Skyen bruges ofte til _____ af data.",
+answers:["lagring"],
+hint:"Data gemmes et andet sted.",
+explanation:"Cloud-løsninger bruges ofte til datalagring."
+},
+
+{
+question:"En chatbot er et digitalt _____.",
+answers:["artefakt"],
+hint:"Samme ord som app og smartwatch.",
+explanation:"En chatbot er et digitalt artefakt."
+},
+
+{
+question:"Et artefakt kan have både tilsigtede og utilsigtede _____.",
+answers:["konsekvenser"],
+hint:"Positive eller negative følger.",
+explanation:"Teknologier påvirker ofte samfundet på flere måder."
+},
+
+{
+question:"En uønsket følge af teknologi kaldes ofte en negativ _____.",
+answers:["konsekvens"],
+hint:"Noget der sker på grund af teknologien.",
+explanation:"Nogle konsekvenser er problematiske."
+},
+
+{
+question:"Når man undersøger brugernes oplevelser, arbejder man med _____.",
+answers:["brugsstudier"],
+hint:"Starter med brug.",
+explanation:"Brugsstudier fokuserer på den faktiske anvendelse."
+},
+
+{
+question:"Når et system genkender et ansigt, bruges ofte kunstig _____.",
+answers:["intelligens"],
+hint:"AI på dansk.",
+explanation:"Kunstig intelligens anvendes til mønstergenkendelse."
+},
+
+{
+question:"AI er en forkortelse for Artificial _____.",
+answers:["intelligence"],
+hint:"Engelsk ord for intelligens.",
+explanation:"AI står for Artificial Intelligence."
+},
+
+{
+question:"En algoritme beskriver en række _____ til løsning af en opgave.",
+answers:["trin","instruktioner"],
+hint:"Handlinger i en bestemt rækkefølge.",
+explanation:"Algoritmer består af trin eller instruktioner."
+},
+
+{
+question:"Et regneark er et digitalt _____ .",
+answers:["artefakt"],
+hint:"Samme svar som tidligere.",
+explanation:"Regneark er digitale værktøjer."
+},
+
+{
+question:"Et digitalt artefakt kan understøtte en arbejds_____ .",
+answers:["proces"],
+hint:"En række aktiviteter.",
+explanation:"Artefakter bruges ofte til at effektivisere processer."
+},
+
+{
+question:"Når teknologi gør arbejdet hurtigere, øges ofte _____.",
+answers:["effektiviteten","effektivitet"],
+hint:"Man bruger mindre tid.",
+explanation:"Teknologi kan effektivisere arbejdsgange."
+},
+
+{
+question:"Et artefakt udvikles ofte for at løse et konkret _____.",
+answers:["problem"],
+hint:"Noget som kræver en løsning.",
+explanation:"Teknologier skabes ofte for at løse problemer."
+},
+
+{
+question:"En digital løsning kan være udviklet til en bestemt _____gruppe.",
+answers:["mål"],
+hint:"Brugerne af løsningen.",
+explanation:"Målgruppen er de tiltænkte brugere."
+},
+
+{
+question:"Brugervenlighed handler om, hvor let et system er at _____.",
+answers:["bruge"],
+hint:"Det modsatte af svært at anvende.",
+explanation:"Brugervenlighed er vigtigt i design af artefakter."
+},
+
+{
+question:"En GPS-modtager modtager signaler fra _____.",
+answers:["satellitter"],
+hint:"Befinder sig i rummet.",
+explanation:"GPS bygger på signaler fra satellitter."
+},
+
+{
+question:"Data kan overføres gennem både trådløse og _____ forbindelser.",
+answers:["kablede"],
+hint:"Modsat trådløse.",
+explanation:"Data kan sendes med eller uden kabler."
+},
+
+{
+question:"Et digitalt artefakt kan ændre menneskers _____ vaner.",
+answers:["daglige"],
+hint:"Noget man gør hver dag.",
+explanation:"Teknologier påvirker ofte hverdagen."
+},
+
+{
+question:"Når et system automatisk træffer valg, siger man ofte at beslutningen er _____.",
+answers:["automatiseret"],
+hint:"Foregår uden direkte menneskelig styring.",
+explanation:"Mange digitale systemer udfører automatiserede processer."
+},
+
+{
+question:"Smartphones indeholder mange forskellige _____.",
+answers:["sensorer"],
+hint:"Kamera, GPS og accelerometer er eksempler.",
+explanation:"Sensorer registrerer forskellige typer data."
+},
+
+{
+question:"Når data sendes fra bruger til system, kaldes det _____.",
+answers:["input"],
+hint:"Modsat output.",
+explanation:"Input er data, som systemet modtager."
+},
+
+{
+question:"Når systemet svarer tilbage til brugeren, kaldes det _____.",
+answers:["output"],
+hint:"Modsat input.",
+explanation:"Output er data eller information, som systemet sender ud."
+},
+
+{
+question:"I trelagsarkitektur kaldes laget med data for _____.",
+answers:["databaselag"],
+hint:"Laget hvor data gemmes.",
+explanation:"Databaselaget opbevarer og håndterer data."
+},
+
+{
+question:"I trelagsarkitektur kaldes laget med regler og beregninger for _____.",
+answers:["logiklag"],
+hint:"Her behandles data.",
+explanation:"Logiklaget udfører beregninger og forretningslogik."
+},
+
+{
+question:"I trelagsarkitektur kaldes laget som brugeren møder for _____.",
+answers:["repræsentationslag"],
+hint:"Det handler om visning.",
+explanation:"Repræsentationslaget præsenterer systemet for brugeren."
+},
+
+{
+question:"Data lagres typisk i _____.",
+answers:["databaselag"],
+hint:"Systemets lagerplads.",
+explanation:"Databaselaget opbevarer data."
+},
+
+{
+question:"Brugergrænsefladen hører til i _____.",
+answers:["repræsentationslag"],
+hint:"Det lag brugeren ser.",
+explanation:"Repræsentationslaget viser information til brugeren."
+},
+
+{
+question:"Beregninger udføres typisk i _____.",
+answers:["logiklag"],
+hint:"Mellem brugeren og databasen.",
+explanation:"Logiklaget behandler data."
+},
+
+{
+question:"Når en bruger klikker på en knap, sker det i _____.",
+answers:["repræsentationslag"],
+hint:"Det synlige lag.",
+explanation:"Brugeren interagerer med repræsentationslaget."
+},
+
+{
+question:"Når systemet gemmer en ny kunde, sker det i _____.",
+answers:["databaselag"],
+hint:"Der hvor data opbevares.",
+explanation:"Data gemmes i databaselaget."
+},
+
+{
+question:"Når systemet beregner en pris, sker det i _____.",
+answers:["logiklag"],
+hint:"Laget med regler.",
+explanation:"Logiklaget udfører beregninger."
+},
+
+{
+question:"Databaselaget indeholder typisk en _____.",
+answers:["database"],
+hint:"Et sted hvor data lagres.",
+explanation:"Databaselaget rummer databasen."
+},
+
+{
+question:"Logiklaget kaldes også nogle gange for _____laget.",
+answers:["forretnings"],
+hint:"Virksomhedens regler ligger her.",
+explanation:"Forretningslaget er et andet navn for logiklaget."
+},
+
+
+];
+
+/**************************************************
+ OPSÆTNING
+**************************************************/
+
+questions.sort(() => Math.random() - 0.5);
+questions = questions.slice(0,20);
+
+let currentQuestion = 0;
+let score = 0;
+let attempts = 0;
+let answered = false;
+
+let highscore =
+localStorage.getItem("artefaktHighscore") || 0;
+
+document.getElementById("highscore")
+.textContent = "Highscore: " + highscore;
+
+/**************************************************
+ VIS SPØRGSMÅL
+**************************************************/
+
+function loadQuestion(){
+
+attempts = 0;
+answered = false;
+
+document.getElementById("answer").value = "";
+document.getElementById("answer").style.background =
+"white";
+
+document.getElementById("feedback").innerHTML = "";
+
+document.getElementById("question").textContent =
+questions[currentQuestion].question;
+
+document.getElementById("progress").textContent =
+"Spørgsmål " +
+(currentQuestion+1) +
+" af " +
+questions.length;
+
+let percentage =
+((currentQuestion)/questions.length)*100;
+
+document.getElementById("progressBar").style.width =
+percentage + "%";
+
+}
+
+/**************************************************
+ TJEK SVAR
+**************************************************/
+
+function checkAnswer(){
+
+if(answered){
+return;
+}
+
+attempts++;
+
+let answer =
+document.getElementById("answer")
+.value
+.trim()
+.toLowerCase();
+
+let q = questions[currentQuestion];
+
+let feedback =
+document.getElementById("feedback");
+
+if(q.answers.includes(answer)){
+
+answered = true;
+score++;
+
+document.getElementById("score")
+.textContent = "Point: " + score;
+
+document.getElementById("answer")
+.style.background = "#d4ffd4";
+
+feedback.innerHTML =
+"<span class='correct'>✔ Korrekt!</span>" +
+q.explanation;
+
+}
+
+else{
+
+document.getElementById("answer")
+.style.background = "#ffd4d4";
+
+if(attempts >= 3){
+
+feedback.innerHTML =
+"<span class='wrong'>✘ Korrekt svar:</span> <b>" +
+q.answers[0] +
+"</b>" +
+q.explanation;
+
+answered = true;
+
+}
+else{
+
+feedback.innerHTML =
+"<span class='wrong'>Forkert.</span>" +
+"Tip: " + q.hint +
+"Forsøg: " +
+attempts +
+"/3";
+
+}
+
+}
+
+}
+
+/**************************************************
+ NÆSTE
+**************************************************/
+
+function nextQuestion(){
+
+currentQuestion++;
+
+if(currentQuestion >= questions.length){
+
+showResult();
+
+return;
+}
+
+loadQuestion();
+
+}
+
+/**************************************************
+ RESULTAT
+**************************************************/
+
+function showResult(){
+
+let procent =
+Math.round(
+(score/questions.length)*100
+);
+
+let vurdering = "";
+
+if(procent >= 90){
+
+vurdering = "Ekspert";
+
+}
+else if(procent >= 75){
+
+vurdering = "Meget sikker";
+
+}
+else if(procent >= 50){
+
+vurdering = "På vej";
+
+}
+else{
+
+vurdering = "Behøver mere træning";
+
+}
+
+if(score > highscore){
+
+localStorage.setItem(
+"artefaktHighscore",
+score
+);
+
+highscore = score;
+
+}
+
+document.body.innerHTML =
+
+"<h1>Quiz afsluttet</h1>" +
+
+"<h2>Resultat: " +
+score +
+" ud af " +
+questions.length +
+"</h2>" +
+
+"<h2>" +
+procent +
+"%</h2>" +
+
+"<h2>Niveau: " +
+vurdering +
+"</h2>" +
+
+"<button onclick='location.reload()'>Prøv igen</button>";
+
+}
+
+/**************************************************
+ ENTER-TAST
+**************************************************/
+
+document
+.getElementById("answer")
+.addEventListener("keydown",
+
+function(event){
+
+if(event.key === "Enter"){
+
+checkAnswer();
+
+}
+
+});
+
+loadQuestion();
+
+</script>
+
+</body>
+</html>
