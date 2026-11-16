@@ -1,0 +1,28 @@
+<!DOCTYPE html><html lang="da"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sproghandlinger - Svær quiz</title><style>body{font-family:Arial,sans-serif;max-width:950px;margin:40px auto;padding:20px}#progressContainer{width:100%;height:24px;background:#ddd;border-radius:20px;overflow:hidden}#progressBar{height:100%;width:0;background:#2e8b57}.box{background:#f5f5f5;padding:20px;border-radius:10px}input{padding:10px;width:350px}button{padding:10px 16px;margin:5px}.correct{color:green}.wrong{color:#b00020}</style></head><body><h1>Sproghandlinger – avanceret quiz</h1><div id="progressContainer"><div id="progressBar"></div></div><p id="progress"></p><p id="score">Point: 0</p><div class="box"><p id="question"></p><input id="answer"><button onclick="checkAnswer()">Tjek svar</button><button onclick="nextQuestion()">Næste</button><p id="feedback"></p></div><script>
+const questions=[
+{q:'Vil du hjælpe mig med opgaven?',a:'handlingsregulerende',e:'Forsøger at få modtageren til at gøre noget.'},
+{q:'Det ville være rart, hvis nogen åbnede vinduet.',a:'handlingsregulerende',e:'Indirekte opfordring.'},
+{q:'Kan du ikke lige sende filen til mig?',a:'handlingsregulerende',e:'Anmodning om handling.'},
+{q:'Jeg ville sætte pris på lidt hjælp.',a:'handlingsregulerende',e:'Indirekte ønske om handling.'},
+{q:'Du bør læse teksten en gang til.',a:'handlingsregulerende',e:'Råd regulerer handling.'},
+{q:'Må jeg bede jer dæmpe støjen?',a:'handlingsregulerende',e:'Opfordring til handling.'},
+{q:'Vi forventer, at alle møder til tiden.',a:'handlingsregulerende',e:'Styrer adfærd.'},
+{q:'Det er nok en god idé at gemme dokumentet.',a:'handlingsregulerende',e:'Anbefaling af handling.'},
+{q:'Kunne vi få lidt mere ro?',a:'handlingsregulerende',e:'Indirekte opfordring.'},
+{q:'Rapporten blev afleveret fredag klokken 14.',a:'informationsudvekslende',e:'Oplyser et forhold.'},
+{q:'Der er 98 kommuner i Danmark.',a:'informationsudvekslende',e:'Faktuel information.'},
+{q:'Mødet varer to timer.',a:'informationsudvekslende',e:'Oplysning.'},
+{q:'Skolen blev grundlagt i 1968.',a:'informationsudvekslende',e:'Fakta.'},
+{q:'Toget afgår fra spor 4.',a:'informationsudvekslende',e:'Information.'},
+{q:'Jeg synes, det er den bedste løsning.',a:'holdnings- og følelsesudtrykkende',e:'Udtrykker holdning.'},
+{q:'Jeg er bekymret for udviklingen.',a:'holdnings- og følelsesudtrykkende',e:'Udtrykker følelse.'},
+{q:'Det gør mig virkelig stolt.',a:'holdnings- og følelsesudtrykkende',e:'Udtrykker følelse.'},
+{q:'Efter min mening burde reglerne ændres.',a:'holdnings- og følelsesudtrykkende',e:'Udtrykker holdning.'},
+{q:'Jeg elsker at arbejde i grupper.',a:'holdnings- og følelsesudtrykkende',e:'Udtrykker følelse/holdning.'}
+];
+questions.sort(()=>Math.random()-0.5);let i=0,s=0,aTry=0,done=false;
+function load(){document.getElementById('question').textContent=questions[i].q;progress.textContent=`Spørgsmål ${i+1} af ${questions.length}`;progressBar.style.width=(i/questions.length*100)+'%';answer.value='';feedback.innerHTML='';aTry=0;done=false;}
+function checkAnswer(){if(done)return;const r=answer.value.trim().toLowerCase();if(r===questions[i].a){s++;score.textContent='Point: '+s;feedback.innerHTML='<span class="correct">Korrekt.</span> '+questions[i].e;done=true;}else{aTry++;if(aTry>=3){feedback.innerHTML='<span class="wrong">Forkert.</span> Korrekt svar: '+questions[i].a+'. '+questions[i].e;done=true;}else feedback.innerHTML='Prøv igen.';}}
+function nextQuestion(){i++;if(i>=questions.length){document.body.innerHTML='<h1>Færdig</h1><h2>Score: '+s+'/'+questions.length+'</h2>';return;}load();}
+load();
+</script></body></html>
