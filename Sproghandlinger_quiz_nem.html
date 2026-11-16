@@ -1,0 +1,63 @@
+
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quiz: Sproghandlinger</title>
+<style>
+body{font-family:Arial,sans-serif;max-width:900px;margin:40px auto;padding:20px;line-height:1.6}
+h1{color:#003366}#questionBox{background:#f5f5f5;padding:25px;border-radius:10px}
+#question{font-size:1.2em;font-weight:bold}input{width:320px;padding:10px;margin-right:10px}
+button{padding:10px 20px;margin-top:10px;cursor:pointer}.correct{color:green}.wrong{color:red}
+#progressContainer{width:100%;height:25px;background:#ddd;border-radius:20px;margin-bottom:20px;overflow:hidden}
+#progressBar{height:100%;width:0%;background:#2e8b57;transition:.4s}.stats{display:flex;gap:30px;margin-bottom:15px;font-weight:bold}
+</style></head><body>
+<h1>Quiz: Sproghandlinger</h1>
+<div class="stats"><div id="score">Point: 0</div><div id="highscore">Highscore: 0</div></div>
+<div id="progressContainer"><div id="progressBar"></div></div>
+<p id="progress"></p>
+<div id="questionBox"><p id="question"></p><input type="text" id="answer" autocomplete="off"><button onclick="checkAnswer()">Tjek svar</button><button onclick="nextQuestion()">Næste spørgsmål</button><p id="feedback"></p></div>
+<script>
+let questions=[
+{question:"Hvilken sproghandling er dette: København er Danmarks hovedstad.",answers:["informationsudvekslende"],hint:"Starter med informationsudvekslende.",explanation:" Sætningen giver information eller fakta."},
+{question:"Hvilken sproghandling er dette: Luk vinduet.",answers:["handlingsregulerende"],hint:"Starter med handlingsregulerende.",explanation:" Sætningen forsøger at få nogen til at gøre noget."},
+{question:"Hvilken sproghandling er dette: Jeg elsker pizza.",answers:["holdnings- og følelsesudtrykkende"],hint:"Starter med holdnings-.",explanation:" Sætningen udtrykker en holdning eller følelse."},
+{question:"Hvilken sproghandling er dette: Jorden kredser om solen.",answers:["informationsudvekslende"],hint:"Starter med informationsudvekslende.",explanation:" Sætningen giver information eller fakta."},
+{question:"Hvilken sproghandling er dette: Ræk mig lige bogen.",answers:["handlingsregulerende"],hint:"Starter med handlingsregulerende.",explanation:" Sætningen forsøger at få nogen til at gøre noget."},
+{question:"Hvilken sproghandling er dette: Jeg er skuffet over resultatet.",answers:["holdnings- og følelsesudtrykkende"],hint:"Starter med holdnings-.",explanation:" Sætningen udtrykker en holdning eller følelse."},
+{question:"Hvilken sproghandling er dette: Vand fryser ved 0 grader.",answers:["informationsudvekslende"],hint:"Starter med informationsudvekslende.",explanation:" Sætningen giver information eller fakta."},
+{question:"Hvilken sproghandling er dette: Husk at aflevere opgaven.",answers:["handlingsregulerende"],hint:"Starter med handlingsregulerende.",explanation:" Sætningen forsøger at få nogen til at gøre noget."},
+{question:"Hvilken sproghandling er dette: Jeg synes filmen var kedelig.",answers:["holdnings- og følelsesudtrykkende"],hint:"Starter med holdnings-.",explanation:" Sætningen udtrykker en holdning eller følelse."},
+{question:"Hvilken sproghandling er dette: Der er 12 måneder på et år.",answers:["informationsudvekslende"],hint:"Starter med informationsudvekslende.",explanation:" Sætningen giver information eller fakta."},
+{question:"Hvilken sproghandling er dette: Sæt dig ned.",answers:["handlingsregulerende"],hint:"Starter med handlingsregulerende.",explanation:" Sætningen forsøger at få nogen til at gøre noget."},
+{question:"Hvilken sproghandling er dette: Jeg er glad i dag.",answers:["holdnings- og følelsesudtrykkende"],hint:"Starter med holdnings-.",explanation:" Sætningen udtrykker en holdning eller følelse."},
+{question:"Hvilken sproghandling er dette: Paris er Frankrigs hovedstad.",answers:["informationsudvekslende"],hint:"Starter med informationsudvekslende.",explanation:" Sætningen giver information eller fakta."},
+{question:"Hvilken sproghandling er dette: Tænd lyset.",answers:["handlingsregulerende"],hint:"Starter med handlingsregulerende.",explanation:" Sætningen forsøger at få nogen til at gøre noget."},
+{question:"Hvilken sproghandling er dette: Jeg er nervøs for eksamen.",answers:["holdnings- og følelsesudtrykkende"],hint:"Starter med holdnings-.",explanation:" Sætningen udtrykker en holdning eller følelse."},
+{question:"Hvilken sproghandling er dette: Mennesket har 206 knogler.",answers:["informationsudvekslende"],hint:"Starter med informationsudvekslende.",explanation:" Sætningen giver information eller fakta."},
+{question:"Hvilken sproghandling er dette: Stop med at larme.",answers:["handlingsregulerende"],hint:"Starter med handlingsregulerende.",explanation:" Sætningen forsøger at få nogen til at gøre noget."},
+{question:"Hvilken sproghandling er dette: Jeg er stolt af mit arbejde.",answers:["holdnings- og følelsesudtrykkende"],hint:"Starter med holdnings-.",explanation:" Sætningen udtrykker en holdning eller følelse."},
+{question:"Hvilken sproghandling er dette: Solen står op i øst.",answers:["informationsudvekslende"],hint:"Starter med informationsudvekslende.",explanation:" Sætningen giver information eller fakta."},
+{question:"Hvilken sproghandling er dette: Tag din jakke på.",answers:["handlingsregulerende"],hint:"Starter med handlingsregulerende.",explanation:" Sætningen forsøger at få nogen til at gøre noget."},
+{question:"Hvilken sproghandling er dette: Det gør mig vred.",answers:["holdnings- og følelsesudtrykkende"],hint:"Starter med holdnings-.",explanation:" Sætningen udtrykker en holdning eller følelse."},
+{question:"Hvilken sproghandling er dette: Danmark ligger i Europa.",answers:["informationsudvekslende"],hint:"Starter med informationsudvekslende.",explanation:" Sætningen giver information eller fakta."},
+{question:"Hvilken sproghandling er dette: Kan du åbne døren?",answers:["handlingsregulerende"],hint:"Starter med handlingsregulerende.",explanation:" Sætningen forsøger at få nogen til at gøre noget."},
+{question:"Hvilken sproghandling er dette: Jeg synes skolen burde starte senere.",answers:["holdnings- og følelsesudtrykkende"],hint:"Starter med holdnings-.",explanation:" Sætningen udtrykker en holdning eller følelse."},
+{question:"Hvilken sproghandling er dette: Der findes otte planeter i Solsystemet.",answers:["informationsudvekslende"],hint:"Starter med informationsudvekslende.",explanation:" Sætningen giver information eller fakta."},
+{question:"Hvilken sproghandling er dette: Sluk mobilen.",answers:["handlingsregulerende"],hint:"Starter med handlingsregulerende.",explanation:" Sætningen forsøger at få nogen til at gøre noget."},
+{question:"Hvilken sproghandling er dette: Jeg elsker sommerferie.",answers:["holdnings- og følelsesudtrykkende"],hint:"Starter med holdnings-.",explanation:" Sætningen udtrykker en holdning eller følelse."},
+{question:"Hvilken sproghandling er dette: Der er undervisning i lokale B12.",answers:["informationsudvekslende"],hint:"Starter med informationsudvekslende.",explanation:" Sætningen giver information eller fakta."},
+{question:"Hvilken sproghandling er dette: Ræk hånden op.",answers:["handlingsregulerende"],hint:"Starter med handlingsregulerende.",explanation:" Sætningen forsøger at få nogen til at gøre noget."},
+{question:"Hvilken sproghandling er dette: Jeg er bekymret for klimaet.",answers:["holdnings- og følelsesudtrykkende"],hint:"Starter med holdnings-.",explanation:" Sætningen udtrykker en holdning eller følelse."},
+];
+questions.sort(()=>Math.random()-0.5);questions=questions.slice(0,20);
+let currentQuestion=0,score=0,attempts=0,answered=false;
+let highscore=localStorage.getItem('sproghandlingHighscore')||0;
+document.getElementById('highscore').textContent='Highscore: '+highscore;
+function loadQuestion(){attempts=0;answered=false;answer.value='';answer.style.background='white';feedback.innerHTML='';question.textContent=questions[currentQuestion].question;progress.textContent='Spørgsmål '+(currentQuestion+1)+' af '+questions.length;progressBar.style.width=((currentQuestion)/questions.length*100)+'%';}
+function checkAnswer(){if(answered)return;attempts++;let a=answer.value.trim().toLowerCase();let q=questions[currentQuestion];if(q.answers.includes(a)){answered=true;score++;scoreEl=document.getElementById('score');scoreEl.textContent='Point: '+score;answer.style.background='#d4ffd4';feedback.innerHTML="<span class='correct'>✔ Korrekt!</span>"+q.explanation;}else{answer.style.background='#ffd4d4';if(attempts>=3){feedback.innerHTML="<span class='wrong'>✘ Korrekt svar:</span> <b>"+q.answers[0]+"</b>"+q.explanation;answered=true;}else{feedback.innerHTML="<span class='wrong'>Forkert.</span> Tip: "+q.hint+' Forsøg: '+attempts+'/3';}}}
+function nextQuestion(){currentQuestion++;if(currentQuestion>=questions.length){showResult();return;}loadQuestion();}
+function showResult(){let procent=Math.round(score/questions.length*100);let v=procent>=90?'Ekspert':procent>=75?'Meget sikker':procent>=50?'På vej':'Behøver mere træning';if(score>highscore){localStorage.setItem('sproghandlingHighscore',score);}document.body.innerHTML='<h1>Quiz afsluttet</h1><h2>Resultat: '+score+' ud af '+questions.length+'</h2><h2>'+procent+'%</h2><h2>Niveau: '+v+'</h2><button onclick="location.reload()">Prøv igen</button>';}
+answer.addEventListener('keydown',e=>{if(e.key==='Enter')checkAnswer();});loadQuestion();
+</script></body></html>
