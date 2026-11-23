@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Argumentationsquiz – 40 spørgsmål</title>
+<style>
+body{font-family:Arial,sans-serif;max-width:950px;margin:30px auto;padding:20px;background:#f4f6f9}
+.card{background:white;padding:25px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.progress{height:20px;background:#ddd;border-radius:10px;margin-bottom:20px}
+.bar{height:20px;background:#2e8b57;border-radius:10px;width:0%}
+.option{display:block;margin:8px 0;padding:8px;background:#eef2f7;border-radius:6px}
+button{padding:10px 18px;margin-top:15px}
+#fb{margin-top:15px;padding:12px;border-radius:8px}
+.correct{background:#d4edda}.wrong{background:#f8d7da}
+input[type=text]{width:100%;padding:10px}
+</style>
+</head><body>
+<div class="card"><h1>Quiz: Den simple argumentationsmodel</h1><div class="progress"><div id="bar" class="bar"></div></div><div id="q"></div><div id="fb" style="display:none"></div><button id="check">Tjek svar</button><button id="next" style="display:none">Næste</button></div>
+<script>
+const questions=[
+{type:'choice',question:'Hvad er påstanden i argumentet: Vi bør forbyde mobiltelefoner i undervisningen, fordi eleverne bliver lettere distraheret.',options:['Eleverne bliver lettere distraheret','Vi bør forbyde mobiltelefoner i undervisningen','Skolen har regler'],answer:1,exp:'Påstanden er det synspunkt, man vil overbevise modtageren om.'},
+{type:'choice',question:'Hvad er belægget i samme argument?',options:['Påstanden','Eleverne bliver lettere distraheret','Mobiltelefoner findes'],answer:1,exp:'Belægget er begrundelsen.'},
+{type:'fill',question:'Den skjulte regel mellem påstand og belæg kaldes ________.',answer:'hjemmel',exp:'Hjemlen forbinder påstand og belæg.'},
+{type:'choice',question:'Hvad er påstanden: Man bør spise morgenmad, fordi kroppen har brug for energi.',options:['Kroppen har brug for energi','Man bør spise morgenmad','Energi er vigtigt'],answer:1,exp:'Påstanden er det synspunkt der fremføres.'},
+{type:'choice',question:'Hvad er hjemlen?',options:['Det er vigtigt at gøre ting kroppen har brug for','Kroppen har brug for energi','Morgenmad findes'],answer:0,exp:'Hjemlen forklarer forbindelsen.'},
+{type:'fill',question:'Den begrundelse der støtter påstanden kaldes ________.',answer:'belæg',exp:'Belæg er argumentets begrundelse.'},
+{type:'choice',question:'Hvad er belægget i: Skolen bør investere i flere computere, fordi eleverne arbejder digitalt hver dag.',options:['Skolen bør investere','Eleverne arbejder digitalt hver dag','Computere er dyre'],answer:1,exp:'Belægget er begrundelsen.'},
+{type:'choice',question:'Hvilken appelform: Ifølge Sundhedsstyrelsen bør unge sove mindst 8 timer.',options:['Patos','Ethos','Logos'],answer:1,exp:'Henvisning til autoritet giver ethos.'},
+{type:'choice',question:'Hvilken appelform: Undersøgelser viser at elever med nok søvn klarer sig bedre.',options:['Patos','Ethos','Logos'],answer:2,exp:'Undersøgelser og fakta er logos.'},
+{type:'choice',question:'Hvilken appelform: Forestil dig følelsen af at komme hjem til et tomt hus.',options:['Patos','Ethos','Logos'],answer:0,exp:'Der appelleres til følelser.'},
+{type:'choice',question:'Som læge gennem 20 år anbefaler jeg vaccination. Hvilken appelform?',options:['Ethos','Patos','Logos'],answer:0,exp:'Erfaring og troværdighed er ethos.'},
+{type:'choice',question:'90 % af eleverne siger de lærer mere med tydelige mål.',options:['Patos','Logos','Ethos'],answer:1,exp:'Tal og statistik er logos.'},
+{type:'choice',question:'Ingen børn bør opleve sult i Danmark.',options:['Ethos','Logos','Patos'],answer:2,exp:'Udsagnet søger at vække følelser.'},
+{type:'fill',question:'Ifølge forskerne på universitetet ... = ________',answer:'ethos',exp:'Eksperter skaber ethos.'},
+{type:'fill',question:'Statistikken viser tydeligt ... = ________',answer:'logos',exp:'Statistik er logos.'},
+{type:'fill',question:'Det er hjerteskærende at se ... = ________',answer:'patos',exp:'Følelser er patos.'},
+{type:'choice',question:'Påstand: Vi bør plante flere træer, fordi de optager CO2. Hvad er påstanden?',options:['Træer optager CO2','Vi bør plante flere træer','CO2 findes'],answer:1,exp:'Påstanden er det man argumenterer for.'},
+{type:'choice',question:'Hvad er belægget?',options:['Vi bør plante flere træer','De optager CO2','Træer er grønne'],answer:1,exp:'Belægget støtter påstanden.'},
+{type:'choice',question:'Hvilken hjemmel passer bedst?',options:['Hvis noget reducerer CO2 bør man støtte det','Træer vokser','Skove er flotte'],answer:0,exp:'Det er forbindelsen mellem belæg og påstand.'},
+{type:'choice',question:'Skolen bør have senere mødetid, fordi unge har brug for mere søvn. Hvad er påstanden?',options:['Unge har brug for mere søvn','Skolen bør have senere mødetid','Søvn er vigtigt'],answer:1,exp:'Påstanden er synspunktet.'},
+{type:'choice',question:'Hvad er belægget?',options:['Skolen bør have senere mødetid','Unge har brug for mere søvn','Elever møder trætte'],answer:1,exp:'Belægget begrunder påstanden.'},
+{type:'choice',question:'Passende hjemmel?',options:['Hvis mennesker har brug for noget bør man tage hensyn','Unge kan lide at sove','Skoler bestemmer selv'],answer:0,exp:'Hjemlen forbinder udsagnene.'},
+{type:'fill',question:'Den skjulte regel kaldes ________.',answer:'hjemmel',exp:'Korrekt.'},
+{type:'choice',question:'Vi bør spise mindre sukker, fordi for meget sukker øger risikoen for sygdomme. Hvad er belægget?',options:['Vi bør spise mindre sukker','For meget sukker øger risikoen for sygdomme','Sukker smager godt'],answer:1,exp:'Belægget er begrundelsen.'},
+{type:'choice',question:'Jeg har arbejdet som lærer i 25 år. Hvilken appelform?',options:['Ethos','Patos','Logos'],answer:0,exp:'Erfaring giver ethos.'},
+{type:'choice',question:'Testresultaterne steg med 18 %. Hvilken appelform?',options:['Patos','Logos','Ethos'],answer:1,exp:'Tal og data er logos.'},
+{type:'choice',question:'Tænk på de børn som går sultne i seng. Hvilken appelform?',options:['Patos','Ethos','Logos'],answer:0,exp:'Følelser = patos.'},
+{type:'fill',question:'Appelform baseret på statistik: ________.',answer:'logos',exp:'Logos bygger på fakta.'},
+{type:'choice',question:'Hvilken sætning er en påstand?',options:['Der findes mobning på sociale medier','Sociale medier bør gøre mere for at stoppe mobning','Mange unge bruger sociale medier'],answer:1,exp:'En påstand er et diskutérbart synspunkt.'},
+{type:'choice',question:'Man bør læse bøger, fordi læsning øger ordforrådet. Hvad er hjemlen?',options:['Hvis noget forbedrer læring bør man gøre det','Bøger findes på biblioteker','Mange læser bøger'],answer:0,exp:'Hjemlen forbinder argumentet.'},
+{type:'fill',question:'Vi bør ________ flere træer, fordi de forbedrer miljøet.',answer:'plante',exp:'Påstanden er at plante flere træer.'},
+{type:'choice',question:'Professor Hansen anbefaler denne løsning. Hvilken appelform?',options:['Ethos','Patos','Logos'],answer:0,exp:'Ekspert = ethos.'},
+{type:'choice',question:'Hvis vi ikke handler nu risikerer kommende generationer klimaproblemer. Hvilken appelform dominerer?',options:['Patos','Ethos','Logos'],answer:0,exp:'Bekymring skaber patos.'},
+{type:'choice',question:'Elever bør aflevere opgaver digitalt, fordi det sparer papir. Hvad er belægget?',options:['Elever bør aflevere opgaver digitalt','Det sparer papir','Papir er dyrt'],answer:1,exp:'Belægget er begrundelsen.'},
+{type:'fill',question:'Appelform der bygger på afsenderens troværdighed: ________.',answer:'ethos',exp:'Ethos handler om troværdighed.'},
+{type:'choice',question:'Kommunen bør bygge flere cykelstier, fordi det øger trafiksikkerheden. Hvad er påstanden?',options:['Det øger trafiksikkerheden','Kommunen bør bygge flere cykelstier','Mange cykler'],answer:1,exp:'Påstanden er konklusionen.'},
+{type:'choice',question:'Hjemmel til cykelsti-argumentet?',options:['Hvis noget gør trafikken mere sikker bør man støtte det','Cykelstier fylder plads','Kommuner bygger veje'],answer:0,exp:'Korrekt hjemmel.'},
+{type:'choice',question:'Ifølge forskere falder CO2-udledningen med 30 %, og vi sikrer en bedre fremtid for vores børn. Hvilken kombination?',options:['Kun ethos','Kun logos','Både logos og patos'],answer:2,exp:'Tal = logos, børnenes fremtid = patos.'},
+{type:'choice',question:'Hvilken del af argumentationen er ofte underforstået?',options:['Belæg','Hjemmel','Påstand'],answer:1,exp:'Hjemlen er ofte skjult.'},
+{type:'choice',question:'Hvilket udsagn er bedst som belæg?',options:['Man bør cykle mere','Cykling reducerer trængsel og forurening','Cykler har to hjul'],answer:1,exp:'Belægget skal begrunde påstanden.'}
+];
+let idx=0,score=0;const q=document.getElementById('q'),fb=document.getElementById('fb');
+function render(){document.getElementById('bar').style.width=(idx/questions.length*100)+'%';if(idx>=questions.length){q.innerHTML='<h2>Quiz færdig!</h2><h3>Point: '+score+' / '+questions.length+'</h3>';document.getElementById('check').style.display='none';document.getElementById('next').style.display='none';document.getElementById('bar').style.width='100%';return;} let x=questions[idx],h='<h3>Spørgsmål '+(idx+1)+' af '+questions.length+'</h3><p>'+x.question+'</p>'; if(x.type==='choice'){x.options.forEach((o,i)=>h+='<label class="option"><input type="radio" name="ans" value="'+i+'"> '+o+'</label>')} else{h+='<input id="txt" type="text">'} q.innerHTML=h; fb.style.display='none';}
+function norm(s){return s.toLowerCase().trim();}
+document.getElementById('check').onclick=function(){let x=questions[idx],ok=false;if(x.type==='choice'){let r=document.querySelector('input[name="ans"]:checked'); if(!r)return; ok=parseInt(r.value)===x.answer;} else {ok=norm(document.getElementById('txt').value).includes(norm(x.answer));} if(ok)score++; fb.className=ok?'correct':'wrong'; fb.style.display='block'; fb.innerHTML=(ok?'✅ Korrekt!':'❌ Forkert!')+'<br><strong>Forklaring:</strong> '+x.exp; document.getElementById('next').style.display='inline-block';};
+document.getElementById('next').onclick=function(){idx++;this.style.display='none';render();}; render();
+</script></body></html>
